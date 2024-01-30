@@ -72,11 +72,7 @@ export const signInUser:RequestHandler=async(req:Request,res:Response)=>{
             { userId: user._id },
            `${process.env.TS_JWT_REFRESH_SECRET_KEY}` ||""
         );
-    
-       
-        res.cookie("authToken", authToken, { httpOnly: true });
-        res.cookie("refreshToken", refreshToken, { httpOnly: true });
-        res.status(200).json({ message: "Login Successfully...", userId: user._id });
+        res.status(200).json({ message: "Login Successfully...", userId:user._id , name:user.name, refreshToken:refreshToken, authToken:authToken });
     }catch(err){
         return res.status(400).send("Error in SignIn");
     }
@@ -102,19 +98,24 @@ export const logout = async (req:Request, res:Response) => {
 export const createIntrest =async (req:Request,res:Response)=>{
     const {intrest} =req.body;
     const {userId} =req;
-
+    
     const user =await User.findById(userId);
     const jobcategory =await JobCategory.findOne({categoryName:intrest});
-    if(!user || !jobcategory){
-        return res.status(400).send("User or Job is Not in the Database !!");
+
+    console.log(jobcategory)
+    if(!user ){
+        return res.status(400).send("User is Not in the Database !!");
     }else{
         user.intrest.push(intrest);
+        if(jobcategory){
         jobcategory.interestedUsers.push(userId);
+        const catsave=await jobcategory.save();
+        }
     }
     const save=await user.save();
-    const catsave=await jobcategory.save();
+    
 
-    res.status(200).json({save,catsave});
+    res.status(200).json({save});
 }
 
 

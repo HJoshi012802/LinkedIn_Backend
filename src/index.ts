@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 
 
 import {registerUser,signInUser,logout,createIntrest} from "./Controller/user";
-import {createJob,applyJob} from "./Controller/job";
+import {createJob,applyJob,Jobs} from "./Controller/job";
 import { Auth } from './Middleware/user';
 import { sendMail } from './Helper/sendmail';
 // import {} from "./Controller/u"
@@ -44,7 +44,7 @@ app.get("/logout",logout)
 app.post("/createintrest",Auth,createIntrest);
 app.post("/createjob",Auth,createJob,sendMail);
 app.get("/apply/:id",Auth,applyJob);
-
+app.get("/jobs",Auth,Jobs)
 app.get("/test",sendMail);
 
 

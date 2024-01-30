@@ -66,8 +66,18 @@ export const applyJob = async(req:Request,res:Response)=>{
     }catch(e){
         res.status(400).send(e)
     }
-   
-//   
 }
+
+// All Jobs
+export const Jobs = async(req:Request,res:Response)=>{
+    
+    try{
+        const result = await Job.find({});
+         res.status(200).json({result});
+    }catch(e){
+        res.status(400).send(e)
+    }
+}
+
 
 //Okay Tested Email Is Sending

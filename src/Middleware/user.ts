@@ -3,12 +3,16 @@ import Jwt from 'jsonwebtoken' ;
 import { User } from "../Model/user";
 
 export const Auth =async (req:Request,res:Response,next:NextFunction)=>{
-    const {authToken,refreshToken} =req.cookies;
-    
+    // const {authToken,refreshToken} =req.cookies;
+    const auth =req.headers.authorization;
+    const authToken = auth && auth.split(' ')[1];
+    const refreshToken =auth &&  auth.split('+')[1];
+
         if(!authToken || !refreshToken){
             return res.status(401).json({message : " Authentication Failed : No authToken or refreshToken is provided "})
         }
-         
+
+
         Jwt.verify(authToken,`${process.env.TS_JWT_SECRET_KEY}`||"",(err:any,decode:any)=>{
             if(err){
                 Jwt.verify(refreshToken,`${process.env.TS_JWT_REFRESH_SECRET_KEY}`||"",(refreshErr:any,refreshDecode:any)=>{
@@ -26,6 +30,7 @@ export const Auth =async (req:Request,res:Response,next:NextFunction)=>{
                             return res.status(400).send("You are not authenticated User");
                         }else{
                             req.userId=refreshDecode.userId;
+                            // console.log(refreshDecode.userId)
                             next();
                         }
                     }
@@ -37,6 +42,7 @@ export const Auth =async (req:Request,res:Response,next:NextFunction)=>{
                             return res.status(400).send("You are not authenticated User");
                         }else{
                             req.userId=decode.userId;
+                            // console.log(decode.userId);
                             next();
                         }
             }
